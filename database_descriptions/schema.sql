@@ -1,15 +1,15 @@
 create table image (
 	image_id SERIAL PRIMARY KEY,
 	image_name VARCHAR(255) NOT NULL,
-	created_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
 	image_file bytea NOT NULL
 );
 
 CREATE table album (
 	album_id SERIAL PRIMARY KEY,
 	album_name VARCHAR(255) NOT NULL,
-	created_at TIMESTAMP not null,
-	album_preview SERIAL NOT NULL
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	album_preview SERIAL 
 );
 
 CREATE TABLE album_image_junction (

@@ -1,0 +1,14 @@
+{
+  "name": "backend_2025",
+  "version": "1.0.0",
+  "description": "Projeto da matéria de backend 2025-1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.15.6"
+  }
+}
