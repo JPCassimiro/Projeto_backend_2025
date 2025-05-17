@@ -46,10 +46,10 @@ class album {
 
     async deleteAlbum() {
         try {
-            if (this.id === null || this.id === undefined || typeof (this.id) != "Number") {
+            if (this.id === null || this.id === undefined || typeof (this.id) != "number") {
                 throw `Formatação da entrada incorreta\nid: ${this.id} typeOf: ${typeof(this.id)}`;
             } else {
-                const query = `DELETE FROM album WHERE album_id = '${this.id} RETURNING *'`;
+                const query = `DELETE FROM album WHERE album_id = '${this.id}' RETURNING *`;
                 this.setDbResult = await pool.query(query);
                 writeLog("\nSucesso ao deletar o album\n" + this.dbResult);
             }
@@ -60,12 +60,12 @@ class album {
 
     async updateAlbumName() {
         try {
-            if (this.id === null || this.id === undefined || typeof (this.id) != "Number" || this.name === null || this.name === undefined || typeof (this.name) != "string" || this.name === "") {
+            if (this.id === null || this.id === undefined || typeof (this.id) != "number" || this.name === null || this.name === undefined || typeof (this.name) != "string" || this.name === "") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof(this.name)}\nid: ${this.id} typeOf: ${typeof(this.id)}`;
             } else {
-                const query = `UPDATE FROM album SET album_name = '${this.name}' WHERE album_id = '${this.id}' RETURNING album_id`;
+                const query = `UPDATE album SET album_name = '${this.name}' WHERE album_id = '${this.id}' RETURNING album_id`;
                 const res = pool.query(query);
-                this.setDbResult(res);
+                this.setDbResult = res;
                 writeLog("\nSucesso na alteração de nome do album\n" + JSON.stringify(this.dbResult));
             }
         } catch (err) {
@@ -75,12 +75,12 @@ class album {
 
     async updateAlbumPreview() {
         try {
-            if (this.id === null || this.id === undefined || typeof (this.id) != "Number" || this.preview === null || this.preview === undefined || typeof (this.preview) != "Number") {
+            if (this.id === null || this.id === undefined || typeof (this.id) != "number" || this.preview === null || this.preview === undefined || typeof (this.preview) != "number") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof(this.name)}\nid: ${this.id} typeOf: ${typeof(this.id)}`;
             } else {
-                const query = `UPDATE FROM album SET album_preview = '${this.preview}' WHERE album_id = '${this.id}' RETURNING album_id`;
+                const query = `UPDATE album SET album_preview = '${this.preview}' WHERE album_id = '${this.id}' RETURNING album_id`;
                 const res = pool.query(query);
-                this.setDbResult(res);
+                this.setDbResult = res;
                 writeLog("\nSucesso ao atribuir preview no album\n" + JSON.stringify(this.dbResult));
             }
         } catch (err) {
@@ -89,9 +89,4 @@ class album {
     }
 }
 
-const albumObj = new album();
-
-albumObj.createAlbum();
-albumObj.deleteAlbum();
-albumObj.updateAlbumName();
-albumObj.updateAlbumPreview();
+const albumObj = new album("AlbumCBT",10,6);

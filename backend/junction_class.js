@@ -26,7 +26,7 @@ class album_image_junction {
 
     async insertImageIntoAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "Number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "Number") {
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number") {
                 throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof(this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof(this.imageId)}`;
             } else {
                 const query = `INSERT INTO album_image_junction (image_id, album_id) VALUES('${this.imageId}',${this.albumId}) RETURNING *`;
@@ -40,12 +40,12 @@ class album_image_junction {
 
     async removeImageFromAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "Number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "Number") {
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number") {
                 throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof(this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof(this.imageId)}`;
             } else {
                 const query = `DELETE FROM album_image_junction WHERE album_id = '${this.albumId}' and image_id = '${this.imageId}' RETURNING *`;
                 this.setDbResult = await pool.query(query);
-                writeLog("\nSucesso ao remover imagem do album\n" + this.dbResult);
+                writeLog("\nSucesso ao remover imagem do album\n" + this.dbResult.rows[0].image_id);
             }
         } catch (err) {
             writeLog("\nErro ao remover uma imagem em um album\n" + err);
@@ -54,15 +54,25 @@ class album_image_junction {
 
     async returnImagesInAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "Number") {
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number") {
                 throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof(this.albumId)}`;
             } else {
                 const query = `SELECT * FROM album_image_junction where album_id = '${this.albumId}'`;
                 this.setDbResult = await pool.query(query);
-                writeLog("\nImagens no album\n" + this.dbResult.rows);
+                let imageArray = new Array();
+                this.dbResult.rows.forEach(images => {
+                   imageArray.push(images.image_id);
+                });
+                writeLog("\nImagens no album\n" + imageArray);
             }
         } catch (err) {
             writeLog("\nErro ao recuperar imagens no album\n" + err);
         }
     }
 }
+
+const album_image_junctionObj = new album_image_junction(55,6);
+
+// album_image_junctionObj.insertImageIntoAlbum();
+// album_image_junctionObj.removeImageFromAlbum();
+// album_image_junctionObj.returnImagesInAlbum();

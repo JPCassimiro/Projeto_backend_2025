@@ -9,7 +9,7 @@ CREATE table album (
 	album_id SERIAL PRIMARY KEY,
 	album_name VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	album_preview SERIAL 
+	album_preview INTEGER 
 );
 
 CREATE TABLE album_image_junction (
