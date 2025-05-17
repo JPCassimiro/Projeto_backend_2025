@@ -51,8 +51,9 @@ class image{
             if(this.id === null || this.id === undefined || typeof(this.id)!="number"){
                 throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof(this.id)}`;
             }else{
-                const query = `SELECT * from image where image_id = '${this.id}'`;
-                this.setDbResult = await pool.query(query);
+                const query = `SELECT * from image where image_id = $1`;
+                const values = [this.id];
+                this.setDbResult = await pool.query(query, values);
                 fs.writeFileSync(`../downloaded_images/${this.dbResult.rows[0].image_name}`,this.dbResult.rows[0].image_file);
                 writeLog("\nImagem encontrada com sucesso!\n"+this.dbResult.rows[0].image_name);
             }
@@ -66,8 +67,9 @@ class image{
             if (this.id === null || this.id === undefined || typeof(this.id)!="number") {
                 throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof(this.id)}`;
             }else{
-                const query = `DELETE from image where image_id = '${this.id}' RETURNING *`;
-                this.setDbResult = await pool.query(query);
+                const query = `DELETE from image where image_id = $1 RETURNING *`;
+                const values = [this.id];
+                this.setDbResult = await pool.query(query, values);
                 writeLog("\nImagem apagada com sucesso!\nID: "+this.dbResult.rows[0].image_id);
             }
         } catch (err) {
@@ -78,4 +80,4 @@ class image{
 }
 const path = ""//path da imagem a ser salva
 const fileName = path.split("/");
-const imageObj = new image(fileName[fileName.length-1],55,path);
+const imageObj = new image(fileName[fileName.length-1],null,path);
