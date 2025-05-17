@@ -54,7 +54,7 @@ class album {
                 writeLog("\nSucesso ao deletar o album\n" + this.dbResult);
             }
         } catch (err) {
-            writeLog(`\nErro ao exlcuir a tabela ${this.id}\n` + err);
+            writeLog(`\nErro ao excluir a tabela ${this.id}\n` + err);
         }
     }
 

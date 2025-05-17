@@ -36,18 +36,7 @@ const shutdown = async ()=>{
     }
 }
 
-const insertImage = async (imageData)=>{
-    const query = `INSERT INTO image (image_name, image_file) VALUES('${imageData.name}','${imageData.file}') RETURNING image_id`;
-    try{
-        const res = await pool.query(query)
-        console.log("Sucesso:" + res);
-    } catch(err){
-        console.log(query);
-        console.log(err);
-    }
-}
-
-const searchImage = async (imageName) =>{
+/*const searchImage = async (imageName) =>{
     const query = `SELECT * from image where image_name = '${imageName}'`;
     try {
         const res = await pool.query(query);
@@ -55,9 +44,9 @@ const searchImage = async (imageName) =>{
     } catch(err){
         console.log(err);
     }
-}
+}*/
 
-const deleteImage = async (imageID) =>{
+/*const deleteImage = async (imageID) =>{
     const query = `DELETE from image where image_id = '${imageID}'`;
     try{
         const res = await pool.query(query);
@@ -65,4 +54,4 @@ const deleteImage = async (imageID) =>{
     }catch(err){
         console.log(err);
     }
-}
+}*/
