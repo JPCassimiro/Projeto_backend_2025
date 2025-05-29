@@ -67,7 +67,7 @@ class album {
             } else {
                 const query = `UPDATE album SET album_name = '$1' WHERE album_id = $2 RETURNING album_id`;
                 const values = [this.name, this.id]; 
-                const res = pool.query(query, values);
+                const res = await pool.query(query, values);
                 this.setDbResult = res;
                 writeLog("\nSucesso na alteração de nome do album\nID: " + this.dbResult.rows[0].album_id);
             }
@@ -83,7 +83,7 @@ class album {
             } else {
                 const query = `UPDATE album SET album_preview = '$1' WHERE album_id = $2 RETURNING album_id`;
                 const values = [this.preview, this.id];
-                const res = pool.query(query, values);
+                const res = await pool.query(query, values);
                 this.setDbResult = res;
                 writeLog("\nSucesso ao atribuir preview no album\n" + this.dbResult.rows[0].album_id);
             }
