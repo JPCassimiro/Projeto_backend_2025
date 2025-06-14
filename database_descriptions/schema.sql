@@ -3,7 +3,7 @@ create table user (
 	user_email VARCHAR(255) UNIQUE NOT NULL,
 	user_password VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
- )
+);
 
 create table image (
 	image_id SERIAL PRIMARY KEY,
