@@ -1,8 +1,16 @@
+Table user {
+  user_id serial [primary key]
+  user_email vachar [not null, unique]
+  user_password varcahr [not null]
+  created_at timestamp
+}
+
 Table image {
   image_id serial [primary key]
   image_name varchar [not null]
   image_file blob [not null]
   created_at timestamp
+  user_id integer
 }
 
 Table album {
@@ -10,15 +18,16 @@ Table album {
   album_preview serial 
   album_id serial [primary key]
   created_at timestamp
+  user_id integer
 }
 
 Table album_image_junction {
-  image_id serial [primary key]
-  album_id serial [primary key]
+  image_id integer [primary key]
+  album_id integer [primary key]
 }
 
+Ref: album.user_id < user.user_id
+Ref: image.user_id < user.user_id
 Ref: album.album_preview < album_image_junction.image_id
 Ref: album.album_id > album_image_junction.album_id 
 Ref: image.image_id > album_image_junction.image_id 
-
-
