@@ -1,5 +1,5 @@
 const pool = require('./db');
-const writeLog = require('../logs/log_handler');
+const writeLog = require('../../logs/log_handler');
 
 class album {
     constructor(name = null, preview = null, id = null, dbResult = null) {

@@ -1,5 +1,5 @@
 const pool = require('./db');
-const writeLog = require('../logs/log_handler');
+const writeLog = require('../../logs/log_handler');
 const fs = require('fs');
 
 class image{
