@@ -1,0 +1,9 @@
+
+
+====================  16h-52m-43s/14-5-2025 ====================
+Erro em logUser
+Error: connect ECONNREFUSED ::1:5432
+
+====================  16h-54m-45s/14-5-2025 ====================
+Erro em logUser
+Error: connect ECONNREFUSED ::1:5432

@@ -10,7 +10,7 @@ const port = 3000;
 app = express();
 
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'view'));
+app.set('views', path.join(__dirname, 'backend/view'));
 app.use(express.urlencoded({extended:false}));
 
 app.use(loginRoutes);

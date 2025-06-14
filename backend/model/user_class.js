@@ -109,9 +109,12 @@ class user{
                 if (response.rowCount == 0) {
                     throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
                 }
+                return this.dbResult.rowCount;
             }
         } catch (err) {
             writeLog("\nErro em logUser\n" + err);
         }
     }
 }
+
+module.exports = user;
