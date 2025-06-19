@@ -1,4 +1,4 @@
-create table user (
+create table users (
 	user_id SERIAL PRIMARY KEY,
 	user_email VARCHAR(255) UNIQUE NOT NULL,
 	user_password VARCHAR(255) NOT NULL,
@@ -11,7 +11,7 @@ create table image (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
 	image_file bytea NOT NULL,
 	user_id INTEGER NOT NULL,
-	CONSTANT fk_user FOREIGN KEY (user_id) REFERENCES user(user_id)
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 		ON DELETE CASCADE
 );
 
@@ -19,9 +19,9 @@ CREATE table album (
 	album_id SERIAL PRIMARY KEY,
 	album_name VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	album_preview INTEGER
+	album_preview INTEGER,
 	user_id INTEGER NOT NULL,
-	CONSTANT fk_user FOREIGN KEY (user_id) REFERENCES user(user_id)
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 		ON DELETE CASCADE
 );
 
@@ -34,4 +34,3 @@ CREATE TABLE album_image_junction (
 	CONSTRAINT fk_album FOREIGN KEY (album_id) REFERENCES album(album_id)
 		ON DELETE CASCADE
 );
-
