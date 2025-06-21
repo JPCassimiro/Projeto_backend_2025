@@ -47,9 +47,26 @@ router.get('homepage/getUserAlbuns', async (req, res, next) => {
 
 //Deleção de album
 router.delete('homepage/deleteAlbum', async (req, res, next) => {
-    const albumID = req.body.albumID;
-    const albumObj = new albumClass(null, null, albumID, null, 0);
-    const resp = await albumObj.deleteAlbum();
+     if (checkSession(req.session, req.session.user)) {
+        if (req.body.albumId != undefined || req.body.albumId != null || typeof(req.body.albumId) == "number") {
+            const albumID = req.body.albumId;
+            const albumObj = new albumClass({id: albumID, userId: req.session.userId});
+            const resp = await albumObj.deleteAlbum();
+            if(resp){
+                res.json({ message: "Sucesso em apagar album" });
+                res.end();
+            } else {
+                res.json({ message: "Erro ao apagar album" });
+                res.end();
+            }
+        }else{
+            res.json({ message: "Erro na formatação, verifique" });
+            res.end()
+        }
+     }else{
+        res.json({ message: "Você não esta logado" });
+        res.end();
+     }    
 });
 
 //Atualização de album

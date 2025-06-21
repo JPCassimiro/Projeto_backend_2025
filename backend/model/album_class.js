@@ -2,7 +2,7 @@ const pool = require('./db');
 const writeLog = require('../../logs/log_handler');
 
 class album {
-    constructor(name = null, preview = null, id = null, dbResult = null, userId = null) {
+    constructor({name = null, preview = null, id = null, dbResult = null, userId = null}) {
         this.name = name;
         this.id = id;
         this.dbResult = dbResult;
@@ -52,11 +52,11 @@ class album {
 
     async deleteAlbum() {
         try {
-            if (this.id === null || this.id === undefined || typeof (this.id) != "number") {
-                throw `Formatação da entrada incorreta\nid: ${this.id} typeOf: ${typeof (this.id)}`;
+            if (this.id === null || this.id === undefined || typeof (this.id) != "number" || this.userId === null || this.userId === undefined || typeof (this.userId) != "number") {
+                throw `Formatação da entrada incorreta\nid: ${this.id} typeOf: ${typeof (this.id)} \nuserID: ${this.userId} typerOf: ${this.userId}`;
             } else {
-                const query = `DELETE FROM album WHERE album_id = $1 RETURNING *`;
-                const values = [this.id];
+                const query = `DELETE FROM album WHERE album_id = $1 AND user_id = $2 RETURNING *`;
+                const values = [this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;

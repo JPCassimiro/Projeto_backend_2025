@@ -75,11 +75,11 @@ class image {
 
     async deleteImage() {
         try {
-            if (this.id == undefined || typeof (this.id) != "number") {
-                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof (this.id)}`;
+            if (this.id == undefined || typeof (this.id) != "number" || this.userId == undefined || typeof (this.userId) != "number") {
+                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof (this.id)}\nID de usuário: ${this.userId} typeOf: ${typeof (this.userId)}`;
             } else {
-                const query = `DELETE from image where image_id = $1 RETURNING *`;
-                const values = [this.id];
+                const query = `DELETE from image where image_id = $1 AND user_id = $2 RETURNING *`;
+                const values = [this.id,this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
