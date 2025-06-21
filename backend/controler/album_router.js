@@ -39,7 +39,7 @@ router.post('/homepage/createAlbum', async (req, res, next) => {
 router.get('/homepage/getUserAlbuns', async (req, res, next) => {
     if (checkSession(req.session, req.session.user)) {
         const userID = req.session.userId;
-        const albumObj = new albumClass({ userID: userID });
+        const albumObj = new albumClass({ userId: userID });
         const resp = await albumObj.getAlbunsByUser();
         if (resp) {
             res.json({ message: "Sucesso em retornar albums", albuns: JSON.stringify(resp.rows) });
@@ -55,11 +55,11 @@ router.get('/homepage/getUserAlbuns', async (req, res, next) => {
 });
 
 //Deleção de album
-router.delete('homepage/deleteAlbum', async (req, res, next) => {
+router.delete('/homepage/deleteAlbum', async (req, res, next) => {
      if (checkSession(req.session, req.session.user)) {
         if (req.body.albumId != undefined || req.body.albumId != null || typeof(req.body.albumId) == "number") {
-            const albumID = req.body.albumId;
-            const albumObj = new albumClass({id: albumID, userId: req.session.userId});
+            const albumId = Number(req.body.albumId);
+            const albumObj = new albumClass({id: albumId, userId: req.session.userId});
             const resp = await albumObj.deleteAlbum();
             if(resp){
                 res.json({ message: "Sucesso em apagar album" });
@@ -81,7 +81,7 @@ router.delete('homepage/deleteAlbum', async (req, res, next) => {
 //Atualização de album
 router.patch('/homepage/updateAlbum', async (req, res, next) => {
     if (checkSession(req.session, req.session.user)) {
-        const albumId = req.body.albumId;
+        const albumId = Number(req.body.albumId);
         const albumName = req.body.albumName;
         if (albumId != undefined || typeof (albumId) === "number" || albumName != undefined || albumName != "" || typeof (albumName) === "string") {
             const albumObj = new albumClass({ name: albumName, userId: req.session.userId, id: albumId });

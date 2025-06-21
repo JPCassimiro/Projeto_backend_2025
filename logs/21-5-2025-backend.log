@@ -1,0 +1,164 @@
+
+
+====================  19h-15m-20s/21-5-2025 ====================
+Erro em logUser
+Erro de entrada em logUser
+email: null typeof: object
+password: null typeof: object
+
+====================  19h-15m-25s/21-5-2025 ====================
+Erro em logUser
+Erro de entrada em logUser
+email: null typeof: object
+password: null typeof: object
+
+====================  19h-16m-26s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-17m-46s/21-5-2025 ====================
+A imagem 10 não pôde ser apagada!
+Formatação da entrada incorreta
+ID: 10 typeOf: string
+ID de usuário: 5 typeOf: number
+
+====================  19h-19m-9s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-19m-12s/21-5-2025 ====================
+Imagem apagada com sucesso!
+ID: 10
+
+====================  19h-19m-26s/21-5-2025 ====================
+Sucesso em getImagesByUser
+Quantidade de imagens encontradas: 2
+../downloaded_images/5
+
+====================  19h-24m-34s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-24m-37s/21-5-2025 ====================
+Erro ao inserir na tabela album
+error: não foi possível determinar o tipo de dados do parâmetro $1
+
+====================  19h-25m-33s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-25m-35s/21-5-2025 ====================
+Erro ao inserir na tabela album
+error: não foi possível determinar o tipo de dados do parâmetro $1
+
+====================  19h-25m-55s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-25m-57s/21-5-2025 ====================
+Erro ao inserir na tabela album
+error: não foi possível determinar o tipo de dados do parâmetro $1
+
+====================  19h-26m-14s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-26m-16s/21-5-2025 ====================
+Sucesso na inseção na tabela album
+ID: 1
+
+====================  19h-27m-0s/21-5-2025 ====================
+Erro na alteração do album 1
+error: não foi possível determinar o tipo de dados do parâmetro $1
+
+====================  19h-27m-6s/21-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: Formatação da entrada incorreta
+USER_ID: null typeOf: object
+
+====================  19h-27m-53s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-27m-55s/21-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: error: erro de sintaxe em ou próximo a "*"
+
+====================  19h-28m-36s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-28m-38s/21-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: error: referência à coluna "user_id" é ambígua
+
+====================  19h-29m-13s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-29m-15s/21-5-2025 ====================
+Sucesso em getAlbunsByUser
+Quantidade de albuns encontrados: 1
+
+====================  19h-29m-42s/21-5-2025 ====================
+Erro na alteração do album 1
+error: não foi possível determinar o tipo de dados do parâmetro $1
+
+====================  19h-30m-7s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-30m-10s/21-5-2025 ====================
+Sucesso na alteração de nome do album
+ID: 1
+
+====================  19h-31m-4s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-31m-7s/21-5-2025 ====================
+Sucesso em getAlbunsByUser
+Quantidade de albuns encontrados: 1
+
+====================  19h-31m-44s/21-5-2025 ====================
+Sucesso ao deletar o album
+ID: 1
+
+====================  19h-31m-55s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-32m-19s/21-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  19h-32m-21s/21-5-2025 ====================
+Erro ao excluir a tabela 1
+Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  19h-32m-32s/21-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  19h-32m-44s/21-5-2025 ====================
+Sucesso na inseção na tabela album
+ID: 2
+
+====================  19h-32m-47s/21-5-2025 ====================
+Sucesso em getAlbunsByUser
+Quantidade de albuns encontrados: 1
+
+====================  19h-32m-49s/21-5-2025 ====================
+Erro na alteração do album 1
+Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  19h-32m-55s/21-5-2025 ====================
+Sucesso na alteração de nome do album
+ID: 2
+
+====================  19h-33m-3s/21-5-2025 ====================
+Sucesso ao deletar o album
+ID: 2

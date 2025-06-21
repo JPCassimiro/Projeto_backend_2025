@@ -35,8 +35,9 @@ class album {
             if (this.name == undefined || typeof (this.name) != "string" || this.name === "" || this.userId == undefined || typeof(this.userId) != "number") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof (this.name)}`;
             } else {
-                const query = `INSERT INTO album (album_name, user_id) VALUES('$1',$2) RETURNING *`;
+                const query = `INSERT INTO album (album_name, user_id) VALUES($1,$2) RETURNING *`;
                 const values = [this.name, this.userId];
+                console.log(typeof(this.name));
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
@@ -62,9 +63,11 @@ class album {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
                 }
                 writeLog("\nSucesso ao deletar o album\nID: " + this.dbResult.rows[0].album_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro ao excluir a tabela ${this.id}\n` + err);
+            return false;
         }
     }
 
@@ -73,16 +76,18 @@ class album {
             if (this.id === null || this.id === undefined || typeof (this.id) != "number" || this.name === null || this.name === undefined || typeof (this.name) != "string" || this.name === "" || this.userId == undefined || typeof(this.userId) != "number") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof (this.name)}\nid: ${this.id} typeOf: ${typeof (this.id)}`;
             } else {
-                const query = `UPDATE album SET album_name = '$1' WHERE album_id = $2 and user_id = $3 RETURNING album_id`;
+                const query = `UPDATE album SET album_name = $1 WHERE album_id = $2 and user_id = $3 RETURNING album_id`;
                 const values = [this.name, this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
                 }
                 writeLog("\nSucesso na alteração de nome do album\nID: " + this.dbResult.rows[0].album_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro na alteração do album ${this.id}\n` + err);
+            return false;
         }
     }
 
@@ -109,7 +114,7 @@ class album {
             if (this.userId == undefined || typeof (this.userId) != "number") {
                 throw `Formatação da entrada incorreta\nUSER_ID: ${this.userId} typeOf: ${typeof (this.userId)}`;
             } else {
-                const query = `select from * album inner join users on users.user_id = album.user_id where user_id = $1`;
+                const query = `select * from album inner join users on users.user_id = album.user_id where users.user_id = $1`;
                 const values = [this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {

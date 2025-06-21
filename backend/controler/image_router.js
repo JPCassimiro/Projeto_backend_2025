@@ -58,7 +58,7 @@ router.get("/homepage/getImages", async (req, res, next)=>{
 router.delete("/homepage/deleteImage", async (req, res, next) => {
     if(checkSession(req.session, req.session.user)){
         if (req.body.imageId != undefined || req.body.imageId != null || typeof(req.body.imageId) == "number") {
-            const imageID = req.body.imageId;
+            const imageID = Number(req.body.imageId);
             const imageObj = new imageClass({userId: req.session.userId, id: imageID});
             const resp = await imageObj.deleteImage();
             if(resp){

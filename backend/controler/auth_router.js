@@ -6,7 +6,7 @@ const userClass = require('../model/user_class');
 router.post('/users/login', async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    const userObj = new userClass(0, email, password, null);
+    const userObj = new userClass({email: email, password: password});
     const resp = await userObj.logUser();
     if (resp) {
         req.session.user = email;
