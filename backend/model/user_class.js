@@ -111,7 +111,7 @@ class user {
                     throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
                 }
                 writeLog("\nUsuário logado com sucesso\nID:" + this.dbResult.rows[0].user_id);
-                return this.dbResult.rowCount;
+                return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro em logUser\n" + err);

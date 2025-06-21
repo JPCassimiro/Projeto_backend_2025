@@ -2,7 +2,7 @@ const pool = require('./db');
 const writeLog = require('../../logs/log_handler');
 
 class album {
-    constructor(name = null, preview = null, id = null, dbResult = null, userId) {
+    constructor(name = null, preview = null, id = null, dbResult = null, userId = null) {
         this.name = name;
         this.id = id;
         this.dbResult = dbResult;
@@ -32,19 +32,21 @@ class album {
 
     async createAlbum() {
         try {
-            if (this.name === null || this.name === undefined || typeof (this.name) != "string" || this.name === "") {
+            if (this.name == undefined || typeof (this.name) != "string" || this.name === "" || this.userId == undefined || typeof(this.userId) != "number") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof (this.name)}`;
             } else {
-                const query = `INSERT INTO album (album_name) VALUES('$1') RETURNING *`;
-                const values = [this.name];
+                const query = `INSERT INTO album (album_name, user_id) VALUES('$1',$2) RETURNING *`;
+                const values = [this.name, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
                     throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
                 }
                 writeLog("\nSucesso na inseção na tabela album\nID: " + this.dbResult.rows[0].album_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro ao inserir na tabela album\n" + err);
+            return false;
         }
     }
 
@@ -121,3 +123,5 @@ class album {
         }
     }
 }
+
+module.exports = album;

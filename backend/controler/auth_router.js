@@ -3,19 +3,6 @@ const path = require('path');
 const router = express.Router();
 const userClass = require('../model/user_class');
 
-
-router.get('/', (req, res, next) => {
-    if (req.session && req.session.user) {
-        res.redirect(`/homepage?user:${req.session.id}`);
-    } else {
-        res.redirect('/users/login');
-    }
-});
-
-router.get('/users/login', (req, res, next) => {
-    res.render('../view/login', {});
-});
-
 router.post('/users/login', async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -23,15 +10,14 @@ router.post('/users/login', async (req, res, next) => {
     const resp = await userObj.logUser();
     if (resp) {
         req.session.user = email;
+        req.session.userId = resp.rows[0].user_id;
         req.session.save();
-        res.redirect('/');
+        res.json({message: "Usuário logado com sucesso", user: resp.rows[0].user_email, userId: resp.rows[0].user_id});
+        res.end();
     } else {
-        res.redirect('/users/signin');
+        res.json({message: "Usuário não encontrado"});
+        res.end();
     }
-});
-
-router.get('/users/signin', async (req, res, next) => {
-    res.render('../view/signin');
 });
 
 router.post('/users/signin', async (req, res, next) => {
@@ -42,16 +28,17 @@ router.post('/users/signin', async (req, res, next) => {
     if (resp) {
         req.session.user = email;
         req.session.save();
-        res.redirect('/');
+        res.json({message: "Sucesso na criação de usuário"});
+        res.end();
     } else {
-        res.write("<h1>bad mistake</h1>");
+        res.json("Erro no banco de dados, verifique a entrada de dados");
         res.end();
     }
 });
 
 router.post('/users/logoff', async (req, res, next)=>{
     req.session.destroy();
-    res.redirect('/');
-})
+    res.json("Logoff feito com sucesso");
+});
 
 module.exports = router;

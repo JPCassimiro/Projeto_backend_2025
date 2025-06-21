@@ -4,14 +4,13 @@ const express = require('express');
 const session = require('express-session');
 const authRoutes = require('./backend/controler/auth_router');
 const albumRouter = require('./backend/controler/album_router');
+const imageRoutes = require('./backend/controler/image_router');
 
 const port = 3000;
 
 
 app = express();
 
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'backend/view'));
 app.use(express.urlencoded({extended:false}));
 
 app.use(session({
@@ -23,6 +22,7 @@ app.use(session({
 
 app.use(authRoutes);
 app.use(albumRouter);
+app.use(imageRoutes);
 
 app.get('/homepage', (req, res, next) => {
     res.render('../view/homepage',{user: `${req.session.user}`});
