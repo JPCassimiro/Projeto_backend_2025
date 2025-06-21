@@ -2,82 +2,105 @@ const pool = require('./db');
 const writeLog = require('../../logs/log_handler');
 const fs = require('fs');
 
-class image{
-    constructor(name=null, id=null, file=null, dbResult=null){
+class image {
+    constructor(name = null, id = null, file = null, dbResult = null, userId = null) {
         this.name = name;
         this.id = id;
         this.file = file;
+        this.userId = userId;
         this.dbResult = dbResult;
     }
 
-    set setImageName(name){
+    set setImageName(name) {
         this.name = name;
     }
 
-    set setImageID(id){
+    set setImageID(id) {
         this.id = id;
     }
 
-    set setImageFile(file){
+    set setImageFile(file) {
         this.file = file;
     }
 
-    set setDbResult(dbResult){
-        this.dbResult=dbResult
+    set setDbResult(dbResult) {
+        this.dbResult = dbResult
     }
 
-    get getDbResult(){
+    get getDbResult() {
         return this.dbResult;
     }
 
-    async insertImage(){
-        try{
-            if(this.name === null || this.name === undefined || typeof(this.name)!="string" || this.name === ""){
-                throw `Formatação de entrada incorreta\nName: ${this.name} Type: ${typeof(this.name)}\n`;
-            }else{
+    async insertImage() {
+        try {
+            if (this.name == undefined || typeof (this.name) != "string" || this.name === "" || this.userId == undefined || typeof (this.userId) != "number") {
+                throw `Formatação de entrada incorreta\nName: ${this.name} Type: ${typeof (this.name)}\n`;
+            } else {
                 const fileBuffer = Buffer.isBuffer(this.file) ? this.file : fs.readFileSync(this.file);
                 const query = `INSERT INTO image (image_name, image_file) VALUES($1, $2) RETURNING image_id`;
                 const values = [this.name, fileBuffer];
                 this.setDbResult = await pool.query(query, values);
-                writeLog("\nImagem salva com sucesso!\nImage ID:"+this.dbResult.rows[0].image_id);
+                writeLog("\nImagem salva com sucesso!\nImage ID:" + this.dbResult.rows[0].image_id);
             }
-        }catch(err){
-            writeLog("\nErro ao salvar imagem!\n"+err);
+        } catch (err) {
+            writeLog("\nErro ao salvar imagem!\n" + err);
         }
     }
 
-    async searchImage(){
+    async searchImage() {
         try {
-            if(this.id === null || this.id === undefined || typeof(this.id)!="number"){
-                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof(this.id)}`;
-            }else{
+            if (this.id == undefined || typeof (this.id) != "number") {
+                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof (this.id)}`;
+            } else {
                 const query = `SELECT * from image where image_id = $1`;
                 const values = [this.id];
                 this.setDbResult = await pool.query(query, values);
-                fs.writeFileSync(`../downloaded_images/${this.dbResult.rows[0].image_name}`,this.dbResult.rows[0].image_file);
-                writeLog("\nImagem encontrada com sucesso!\n"+this.dbResult.rows[0].image_name);
+                fs.writeFileSync(`../downloaded_images/${this.dbResult.rows[0].image_name}`, this.dbResult.rows[0].image_file);
+                writeLog("\nImagem encontrada com sucesso!\n" + this.dbResult.rows[0].image_name);
             }
         } catch (err) {
-            writeLog("\nImagem não encontrada!\n"+err);
+            writeLog("\nImagem não encontrada!\n" + err);
         }
     }
 
-    async deleteImage(){
+    async deleteImage() {
         try {
-            if (this.id === null || this.id === undefined || typeof(this.id)!="number") {
-                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof(this.id)}`;
-            }else{
+            if (this.id == undefined || typeof (this.id) != "number") {
+                throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof (this.id)}`;
+            } else {
                 const query = `DELETE from image where image_id = $1 RETURNING *`;
                 const values = [this.id];
                 this.setDbResult = await pool.query(query, values);
-                writeLog("\nImagem apagada com sucesso!\nID: "+this.dbResult.rows[0].image_id);
+                writeLog("\nImagem apagada com sucesso!\nID: " + this.dbResult.rows[0].image_id);
             }
         } catch (err) {
             writeLog(`\nA imagem ${this.id} não pôde ser apagada!\n` + err);
         }
     }
 
+    async getImagesByUser() {
+        try {
+            if (this.userId == undefined || typeof (this.userId) != "number") {
+                throw `Formatação da entrada incorreta\nUSER_ID: ${this.userId} typeOf: ${typeof (this.userId)}`;
+            } else {
+                const query = `select from * image inner join users on users.user_id = image.user_id where user_id = $1 `;
+                const values = [this.userId];
+                this.setDbResult = await pool.query(query, values);
+                if (this.dbResult.rowCount === 0) {
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                }
+                this.dbResult.rows.forEach(element => {
+                    fs.writeFileSync(`../downloaded_images/${element.user_id}/${element.image_name}`, element.image_file);
+                });
+                writeLog("\nSucesso em getImagesByUser\nQuantidade de imagens encontradas: " + this.dbResult.rowCount + `\n../downloaded_images/${this.dbResult.rows[0].user_id}`);
+                return this.dbResult;
+            }
+        } catch (err) {
+            writeLog("\nErro em getImagesByUser\nErro: " + err);
+        }
+    }
+
 }
 const path = ""//path da imagem a ser salva
 const fileName = path.split("/");
-const imageObj = new image(fileName[fileName.length-1],null,path);
+const imageObj = new image(fileName[fileName.length - 1], null, path);

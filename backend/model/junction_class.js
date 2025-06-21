@@ -72,6 +72,7 @@ class album_image_junction {
             writeLog(`\nErro ao recuperar imagens no album ${this.albumId}\n` + err);
         }
     }
+
 }
 
 const album_image_junctionObj = new album_image_junction(10,6);
