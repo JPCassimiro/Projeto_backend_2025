@@ -2,7 +2,7 @@ const pool = require('./db');
 const writeLog = require('../../logs/log_handler');
 
 class user {
-    constructor(id = 0, email = null, password = null, dbResult = null) {
+    constructor({id = 0, email = null, password = null, dbResult = null}) {
         this.id = id;
         this.email = email;
         this.password = password;

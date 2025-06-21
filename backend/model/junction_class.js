@@ -2,9 +2,10 @@ const pool = require('./db');
 const writeLog = require('../../logs/log_handler');
 
 class album_image_junction {
-    constructor(imageId = null, albumId = null, dbResult = null) {
+    constructor({imageId = null, albumId = null, dbResult = null, userid = null}) {
         this.albumId = albumId;
         this.imageId = imageId;
+        this.userid = userid;
         this.dbResult = dbResult;
     }
 
@@ -26,7 +27,7 @@ class album_image_junction {
 
     async insertImageIntoAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number") {
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number" || this.user == undefined || typeof(this.userid) != "number") {
                 throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof (this.imageId)}`;
             } else {
                 const query = `INSERT INTO album_image_junction (image_id, album_id) VALUES($1,$2) RETURNING *`;

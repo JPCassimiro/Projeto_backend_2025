@@ -52,7 +52,8 @@ router.get("/homepage/getImages", async (req, res, next)=>{
         res.json({message: "Você não esta logado, está rota é secreta"});
         res.end();
     }
-})
+});
+
 
 router.delete("/homepage/deleteImage", async (req, res, next) => {
     if(checkSession(req.session, req.session.user)){
