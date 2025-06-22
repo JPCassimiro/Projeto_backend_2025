@@ -96,7 +96,7 @@ class album {
             if (this.id === null || this.id === undefined || typeof (this.id) != "number" || this.preview === null || this.preview === undefined || typeof (this.preview) != "number" || this.userId == undefined || typeof(this.userId) != "number") {
                 throw `Formatação da entrada incorreta\nname: ${this.name} typeOf: ${typeof (this.name)}\nid: ${this.id} typeOf: ${typeof (this.id)}`;
             } else {
-                const query = `UPDATE album SET album_preview = '$1' WHERE album_id = $2 and user_id = $3 RETURNING album_id`;
+                const query = `UPDATE album SET album_preview = $1 WHERE album_id = $2 and user_id = $3 RETURNING album_id`;
                 const values = [this.preview, this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {

@@ -1,0 +1,61 @@
+
+
+====================  11h-7m-31s/22-5-2025 ====================
+Erro em logUser
+Error: connect ECONNREFUSED ::1:5432
+
+====================  11h-7m-50s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-9m-37s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-10m-37s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-11m-7s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-11m-9s/22-5-2025 ====================
+Erro ao atribuir preview do album 1
+error: sintaxe de entrada é inválida para tipo integer: "$1"
+
+====================  11h-11m-59s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-12m-1s/22-5-2025 ====================
+Erro ao atribuir preview do album 1
+Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  11h-12m-32s/22-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  11h-12m-49s/22-5-2025 ====================
+Usuário logado com sucesso
+ID:5
+
+====================  11h-12m-52s/22-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  11h-12m-53s/22-5-2025 ====================
+Erro em getAlbunsByUser
+Erro: Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando
+resultado: [object Object]
+
+====================  11h-13m-14s/22-5-2025 ====================
+Sucesso na inseção na tabela album
+ID: 3
+
+====================  11h-13m-17s/22-5-2025 ====================
+Sucesso em getAlbunsByUser
+Quantidade de albuns encontrados: 1
