@@ -5,6 +5,7 @@ const imageClass = require('../model/image_class');
 
 const checkSession = (session, user) => {
     if (session && user) {
+        writeLog(`\nUsuário tentou acessar uma rota protegida\nrota: ${route}`);
         return true
     } else {
         return false;
@@ -12,10 +13,11 @@ const checkSession = (session, user) => {
 }
 
 router.post("/homepage/addImage", async (req, res, next) => {
+    writeLog("\nRequisisção post recebida na rota /homepage/addImage");
     if (checkSession(req.session, req.session.user)) {
         let path = req.body.imagePath;
         if (path == undefined || path === "") {
-            res.json({message: "Erro na entrada, caminho invalido"});
+            res.json({ message: "Erro na entrada, caminho invalido" });
             res.end();
         } else {
             path = path.replace(/\\/g, "/");
@@ -23,59 +25,70 @@ router.post("/homepage/addImage", async (req, res, next) => {
             const imageObj = new imageClass({ name: fileName[fileName.length - 1], file: path, userId: req.session.userId });
             const resp = await imageObj.insertImage();
             if (resp) {
-                res.json({message: "Sucesso em adicionar a imagem no banco de dados"});
+                res.json({ message: "Sucesso em adicionar a imagem no banco de dados" });
                 res.end();
+                writeLog(`\nSucesso em adicionar uma imagem na rota /homepage/addImage\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId}`);
             } else {
-                res.json({message: "Erro ao tentar colocar imagem no banco de dados, verifique o caminho da imagem"});
+                res.json({ message: "Erro ao inserir imagem no banco, isso ocorre caso a formatação da entrada estejá errada ou por um erro no BD" });
                 res.end();
+                writeLog(`\nFalha em adicionar uma imagem na rota /homepage/addImage\nuserId: ${req.session.userId}`);
             }
         }
     } else {
-        res.json({message: "Você não esta logado, está rota é secreta"});
+        res.json({ message: "Você não esta logado" });
+
         res.end();
     }
 });
 
 
-router.get("/homepage/getImages", async (req, res, next)=>{
-    if(checkSession(req.session,req.session.user)){
-        const imageObj = new imageClass({userId: req.session.userId});
+router.get("/homepage/getImages", async (req, res, next) => {
+    writeLog("\nRequisisção get recebida na rota /homepage/getImages");
+    if (checkSession(req.session, req.session.user)) {
+        const imageObj = new imageClass({ userId: req.session.userId });
         const resp = await imageObj.getImagesByUser();
-        if(resp){
-            res.json({message:"certo"})
+        if (resp) {
+            res.json({ message: "Sucesso em obter imagens, verifique a pasta downloaded_images" })
             res.end();
-        }else{
-            res.json({message:"errado"})
+            writeLog(`\nSucesso em obter imagens /homepage/getImages\nuserId: ${req.session.userId}`);
+        } else {
+            res.json({ message: "Falha ao obter imagens" })
             res.end();
+            writeLog(`\nFalha em obter imagens /homepage/getImages\nuserId: ${req.session.userId}`);
         }
-    }else{
-        res.json({message: "Você não esta logado, está rota é secreta"});
+    } else {
+        res.json({ message: "Você não esta logado" });
+
         res.end();
     }
 });
 
 
 router.delete("/homepage/deleteImage", async (req, res, next) => {
-    if(checkSession(req.session, req.session.user)){
-        if (req.body.imageId != undefined || req.body.imageId != null || typeof(req.body.imageId) == "number") {
+    writeLog("\nRequisisção delete recebida na rota /homepage/deleteImage");
+    if (checkSession(req.session, req.session.user)) {
+        if (req.body.imageId != undefined || req.body.imageId != null || typeof (req.body.imageId) == "number") {
             const imageID = Number(req.body.imageId);
-            const imageObj = new imageClass({userId: req.session.userId, id: imageID});
+            const imageObj = new imageClass({ userId: req.session.userId, id: imageID });
             const resp = await imageObj.deleteImage();
-            if(resp){
+            if (resp) {
                 res.json({ message: "Sucesso em apagar imagem" });
                 res.end();
+                writeLog(`\nSucesso em excluir a imagem /homepage/deleteImage\nimage_id: ${resp.rows[0].image_id}\nuserId: ${req.session.userId}`);
             } else {
                 res.json({ message: "Erro ao apagar imagem" });
                 res.end();
+                writeLog(`\nFalha em excluir a imagem /homepage/deleteImage\nuserId: ${req.session.userId}`);
             }
-        }else{
-            res.json({ message: "Erro na formatação, verifique" });
+        } else {
+            res.json({ message: "Erro ao excluir uma imagem no banco, isso ocorre caso a formatação da entrada estejá errada ou por um erro no BD" });
             res.end()
+            writeLog(`\nFalha em excluir a imagem /homepage/deleteImage\nuserId: ${req.session.userId}`);
         }
-    }else{
+    } else {
         res.json({ message: "Você não esta logado" });
         res.end();
-     
+
     }
 })
 
