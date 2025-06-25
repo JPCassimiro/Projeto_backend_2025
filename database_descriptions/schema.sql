@@ -28,9 +28,12 @@ CREATE table album (
 CREATE TABLE album_image_junction (
 	album_id INTEGER NOT NULL,
 	image_id INTEGER NOT NULL,
+	user_id INTEGER NOT NULL,
 	PRIMARY KEY(album_id, image_id),
 	CONSTRAINT fk_image FOREIGN KEY (image_id) REFERENCES image(image_id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_album FOREIGN KEY (album_id) REFERENCES album(album_id)
+		ON DELETE CASCADE
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 		ON DELETE CASCADE
 );

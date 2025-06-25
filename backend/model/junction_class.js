@@ -27,55 +27,63 @@ class album_image_junction {
 
     async insertImageIntoAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number" || this.user == undefined || typeof(this.userid) != "number") {
-                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof (this.imageId)}`;
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number" || this.userid === undefined || this.userid === null  || typeof(this.userid) != "number") {
+                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof (this.imageId)}\nUserId: ${this.userid} typerOf: ${typeof(this.userid)}`;
             } else {
-                const query = `INSERT INTO album_image_junction (image_id, album_id) VALUES($1,$2) RETURNING *`;
-                const values = [this.imageId, this.albumId];
+                const query = `INSERT INTO album_image_junction (image_id, album_id, user_id) VALUES($1,$2,$3) RETURNING *`;
+                const values = [this.imageId, this.albumId, this.userid];
                 this.setDbResult = await pool.query(query, values);
                 writeLog("\nSucesso ao inserir a imagem " + this.dbResult.rows[0].image_id + " no album " + this.dbResult.rows[0].album_id + "\n");
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro ao inserir uma imagem no album ${this.albumId}\n` + err);
+            return false;
         }
     }
 
     async removeImageFromAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number") {
-                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof (this.imageId)}`;
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.imageId === null || this.imageId === undefined || typeof (this.imageId) != "number" || this.userid === undefined || this.userid === null  || typeof(this.userid) != "number") {
+                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nimageId: ${this.imageId} typeOf: ${typeof (this.imageId)}\nUserId: ${this.userid} typerOf: ${typeof(this.userid)}`;
             } else {
-                const query = `DELETE FROM album_image_junction WHERE album_id = $1 and image_id = $2 RETURNING *`;
-                const values = [this.albumId, this.imageId];
+                const query = `DELETE FROM album_image_junction WHERE album_id = $1 AND image_id = $2 AND user_id = $3 RETURNING *`;
+                const values = [this.albumId, this.imageId, this.userid];
                 this.setDbResult = await pool.query(query, values);
                 writeLog("\nSucesso ao remover imagem do album\n" + this.dbResult.rows[0].image_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro ao remover uma imagem no album ${this.albumId}\n` + err);
+            return false;
         }
     }
 
     async returnImagesInAlbum() {
         try {
-            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number") {
-                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}`;
+            if (this.albumId === null || this.albumId == undefined || typeof (this.albumId) != "number" || this.userid === undefined || this.userid === null  || typeof(this.userid) != "number") {
+                throw `Formatação da entrada incorreta\nalbumId: ${this.albumId} typeOf: ${typeof (this.albumId)}\nUserId: ${this.userid} typerOf: ${typeof(this.userid)}`;
             } else {
-                const query = `SELECT * FROM album_image_junction where album_id = $1`;
-                const values = [this.albumId];
+                const query = `SELECT * FROM album_image_junction where album_id = $1 AND user_id = $2`;
+                const values = [this.albumId, this.userid];
                 this.setDbResult = await pool.query(query, values);
                 let imageArray = new Array();
                 this.dbResult.rows.forEach(images => {
                     imageArray.push(images.image_id);
                 });
                 writeLog("\nImagens no album\n" + imageArray);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro ao recuperar imagens no album ${this.albumId}\n` + err);
+            return false;
         }
     }
 
 }
 
-const album_image_junctionObj = new album_image_junction(10,6);
+//const album_image_junctionObj = new album_image_junction(10,6);
 
-album_image_junctionObj.returnImagesInAlbum();
+//album_image_junctionObj.returnImagesInAlbum();
+
+module.exports = album_image_junction;
