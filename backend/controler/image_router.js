@@ -2,8 +2,9 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const imageClass = require('../model/image_class');
+const writeLog = require('../../logs/log_handler');
 
-const checkSession = (session, user) => {
+const checkSession = (session, user, route) => {
     if (session && user) {
         writeLog(`\nUsuário tentou acessar uma rota protegida\nrota: ${route}`);
         return true
@@ -14,7 +15,7 @@ const checkSession = (session, user) => {
 
 router.post("/homepage/addImage", async (req, res, next) => {
     writeLog("\nRequisisção post recebida na rota /homepage/addImage");
-    if (checkSession(req.session, req.session.user)) {
+    if (checkSession(req.session, req.session.user, "/homepage/addImage")) {
         let path = req.body.imagePath;
         if (path == undefined || path === "") {
             res.json({ message: "Erro na entrada, caminho invalido" });
@@ -29,7 +30,13 @@ router.post("/homepage/addImage", async (req, res, next) => {
                 res.end();
                 writeLog(`\nSucesso em adicionar uma imagem na rota /homepage/addImage\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId}`);
             } else {
-                res.json({ message: "Erro ao inserir imagem no banco, isso ocorre caso a formatação da entrada estejá errada ou por um erro no BD" });
+                res.status(400).json({
+                    message: "Erro ao inserir imagem no banco. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                    parametrosEsperados: {
+                        imagePath: "string",
+                    },
+                    bodyType: "form-urlencoded"
+                });
                 res.end();
                 writeLog(`\nFalha em adicionar uma imagem na rota /homepage/addImage\nuserId: ${req.session.userId}`);
             }
@@ -44,7 +51,7 @@ router.post("/homepage/addImage", async (req, res, next) => {
 
 router.get("/homepage/getImages", async (req, res, next) => {
     writeLog("\nRequisisção get recebida na rota /homepage/getImages");
-    if (checkSession(req.session, req.session.user)) {
+    if (checkSession(req.session, req.session.user, "/homepage/getImages")) {
         const imageObj = new imageClass({ userId: req.session.userId });
         const resp = await imageObj.getImagesByUser();
         if (resp) {
@@ -52,7 +59,12 @@ router.get("/homepage/getImages", async (req, res, next) => {
             res.end();
             writeLog(`\nSucesso em obter imagens /homepage/getImages\nuserId: ${req.session.userId}`);
         } else {
-            res.json({ message: "Falha ao obter imagens" })
+            res.status(400).json({
+                message: "Erro ao obter imagens no banco. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
             writeLog(`\nFalha em obter imagens /homepage/getImages\nuserId: ${req.session.userId}`);
         }
@@ -66,10 +78,10 @@ router.get("/homepage/getImages", async (req, res, next) => {
 
 router.delete("/homepage/deleteImage", async (req, res, next) => {
     writeLog("\nRequisisção delete recebida na rota /homepage/deleteImage");
-    if (checkSession(req.session, req.session.user)) {
+    if (checkSession(req.session, req.session.user, "/homepage/deleteImage")) {
         if (req.body.imageId != undefined || req.body.imageId != null || typeof (req.body.imageId) == "number") {
-            const imageID = Number(req.body.imageId);
-            const imageObj = new imageClass({ userId: req.session.userId, id: imageID });
+            const imageId = Number(req.body.imageId);
+            const imageObj = new imageClass({ userId: req.session.userId, id: imageId });
             const resp = await imageObj.deleteImage();
             if (resp) {
                 res.json({ message: "Sucesso em apagar imagem" });
@@ -81,7 +93,13 @@ router.delete("/homepage/deleteImage", async (req, res, next) => {
                 writeLog(`\nFalha em excluir a imagem /homepage/deleteImage\nuserId: ${req.session.userId}`);
             }
         } else {
-            res.json({ message: "Erro ao excluir uma imagem no banco, isso ocorre caso a formatação da entrada estejá errada ou por um erro no BD" });
+            res.status(400).json({
+                message: "Erro ao excluir uma imagem no banco. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                    imageId: "number",
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end()
             writeLog(`\nFalha em excluir a imagem /homepage/deleteImage\nuserId: ${req.session.userId}`);
         }

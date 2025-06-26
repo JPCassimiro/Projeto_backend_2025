@@ -31,8 +31,13 @@ router.post('/homepage/createAlbum', async (req, res, next) => {
                 writeLog(`\nErro na criação de album na rota /homepage/createAlbum\nuserId: ${req.session.userId} \nsession: ${req.session.id}`);
             }
         } else {
-            res.json({ message: "Erro na formatação da entrada" });
-
+            res.status(400).json({
+                message: "Erro ao criar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                    albumName: "string",
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
             writeLog(`\nErro na criação de album na rota /homepage/createAlbum\nuserId: ${req.session.userId} \nsession: ${req.session.id}`);
         }
@@ -55,7 +60,12 @@ router.get('/homepage/getUserAlbuns', async (req, res, next) => {
             res.end();
         } else {
             writeLog(`\nErro ao tentar buscar albuns na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
-            res.json({ message: "Erro ao retornar albuns, isso ocorre caso sua conta não tenha albums ou por um erro no BD" });
+            res.status(400).json({
+                message: "Erro ao retornar álbuns. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
         }
     } else {
@@ -68,7 +78,7 @@ router.get('/homepage/getUserAlbuns', async (req, res, next) => {
 router.delete('/homepage/deleteAlbum', async (req, res, next) => {
     writeLog(`\nRequisição delete na rota /homepage/deleteAlbum`);
     if (checkSession(req.session, req.session.user, '/homepage/deleteAlbum')) {
-        if (req.body.albumId != undefined && req.body.albumId != null && typeof (req.body.albumId) == "number") {
+        if (req.body.albumId != undefined && req.body.albumId != null) {
             const albumId = Number(req.body.albumId);
             const albumObj = new albumClass({ id: albumId, userId: req.session.userId });
             const resp = await albumObj.deleteAlbum();
@@ -77,13 +87,18 @@ router.delete('/homepage/deleteAlbum', async (req, res, next) => {
                 res.end();
                 writeLog(`\nSucesso em apagar albuns na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.json({ message: "Erro ao apagar album" });
+                res.json({ message: "Erro ao interno excluir album" });
                 res.end();
                 writeLog(`\nErro ao tentar apagar um album na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
             }
         } else {
-            res.json({ message: "Erro na formatação da entrada" });
-
+            res.status(400).json({
+                message: "Erro ao excluir um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                    albumId: "number",
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
             writeLog(`\nErro ao tentar apagar um album na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
         }
@@ -99,7 +114,7 @@ router.patch('/homepage/updateAlbum', async (req, res, next) => {
     if (checkSession(req.session, req.session.user, '/homepage/updateAlbum')) {
         const albumId = Number(req.body.albumId);
         const albumName = req.body.albumName;
-        if (albumId != undefined && typeof (albumId) === "number" && albumName != undefined && albumName != "" && typeof (albumName) === "string") {
+        if (albumId != undefined && albumName != undefined && albumName != "" && typeof (albumName) === "string") {
             const albumObj = new albumClass({ name: albumName, userId: req.session.userId, id: albumId });
             const resp = await albumObj.updateAlbumName();
             if (resp) {
@@ -107,12 +122,26 @@ router.patch('/homepage/updateAlbum', async (req, res, next) => {
                 res.end();
                 writeLog(`\nSucesso em alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.json({ message: "Erro ao alterar album" });
+                res.status(400).json({
+                    message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                    parametrosEsperados: {
+                        albumId: "number",
+                        albumName: "string",
+                    },
+                    bodyType: "form-urlencoded"
+                });
                 res.end();
                 writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}`);
             }
         } else {
-            res.json({ message: "Erro na formatação da entrada" });
+            res.status(400).json({
+                message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                    albumId: "number",
+                    albumName: "string",
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
             writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}`);
         }
@@ -127,21 +156,36 @@ router.patch('/homepage/updateAlbumPreview', async (req, res, next) => {
     if (checkSession(req.session, req.session.user, '/homepage/updateAlbumPreview')) {
         const albumId = Number(req.body.albumId);
         const albumPreview = Number(req.body.albumPreview);
-        if (albumId != undefined && typeof (albumId) === "number" && albumPreview != undefined && typeof (albumPreview) === "number") {
+        if (albumId != undefined && albumPreview != undefined) {
             const albumObj = new albumClass({ preview: albumPreview, id: albumId, userId: req.session.userId });
-            const resp = albumObj.updateAlbumPreview();
+            const resp = await albumObj.updateAlbumPreview();
             if (resp) {
                 res.json({ message: "Sucesso em alterar preview do album", album: JSON.stringify(resp.rows[0]) });
                 res.end();
                 writeLog(`\nSucesso em alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.json({ message: "Erro ao alterar preview do album" });
+                res.status(400).json({
+                    message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                    parametrosEsperados: {
+                        albumId: "number",
+                        albumName: "string",
+                        albumPreview: "number"
+                    },
+                    bodyType: "form-urlencoded"
+                });
                 res.end();
                 writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}`);
             }
         } else {
-            res.json({ message: "Erro na formatação da entrada" });
-
+            res.status(400).json({
+                message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                parametrosEsperados: {
+                    albumId: "number",
+                    albumName: "string",
+                    albumPreview: "number"
+                },
+                bodyType: "form-urlencoded"
+            });
             res.end();
             writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}`);
         }

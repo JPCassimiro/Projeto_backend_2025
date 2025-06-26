@@ -29,7 +29,6 @@ class user {
         return this.dbResult;
     }
 
-
     async createUser() {
         try {
             if (this.email == null || this.email === "" || typeof (this.email) != "string" || this.password == null || this.password === "" || typeof (this.password) != "string") {

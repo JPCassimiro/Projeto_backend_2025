@@ -40,7 +40,7 @@ class album {
                 console.log(typeof(this.name));
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 writeLog("\nSucesso na inseção na tabela album\nID: " + this.dbResult.rows[0].album_id);
                 return this.dbResult;
@@ -60,7 +60,7 @@ class album {
                 const values = [this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 writeLog("\nSucesso ao deletar o album\nID: " + this.dbResult.rows[0].album_id);
                 return this.dbResult;
@@ -80,7 +80,7 @@ class album {
                 const values = [this.name, this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 writeLog("\nSucesso na alteração de nome do album\nID: " + this.dbResult.rows[0].album_id);
                 return this.dbResult;
@@ -100,12 +100,14 @@ class album {
                 const values = [this.preview, this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 writeLog("\nSucesso ao atribuir preview no album\n" + this.dbResult.rows[0].album_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog(`\nErro ao atribuir preview do album ${this.id}\n` + err);
+            return false;
         }
     }
 
@@ -118,13 +120,14 @@ class album {
                 const values = [this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
-                writeLog("\nSucesso em getAlbunsByUser\nQuantidade de albuns encontrados: " + this.dbResult.rowCount);
+                writeLog("\nSucesso em encontrar albuns do usuário\nQuantidade de albuns encontrados: " + this.dbResult.rowCount);
                 return this.dbResult;
             }
         } catch (err) {
-            writeLog("\nErro em getAlbunsByUser\nErro: " + err);
+            writeLog("\nErro ao encontrar albuns do usuário\nErro: " + err);
+            return false;
         }
     }
 }

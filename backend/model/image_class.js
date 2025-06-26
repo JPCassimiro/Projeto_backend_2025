@@ -40,13 +40,13 @@ class image {
                 const values = [this.name, fileBuffer, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
-                writeLog("\nSucesso em insertImage\nImage ID:" + this.dbResult.rows[0].image_id);
+                writeLog("\nSucesso em inserir imagem no BD\nimage_id:" + this.dbResult.rows[0].image_id);
                 return this.dbResult;
             }
         } catch (err) {
-            writeLog("\nErro ao salvar imagem!\n" + err);
+            writeLog("\nErro ao salvar imagem!\nErro: " + err);
             return false;
         }
     }
@@ -61,7 +61,7 @@ class image {
                 const values = [this.id];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 fs.writeFileSync(`downloaded_images/${this.dbResult.rows[0].image_name}`, this.dbResult.rows[0].image_file);
                 writeLog("\nImagem encontrada com sucesso!\n" + this.dbResult.rows[0].image_name);
@@ -79,10 +79,10 @@ class image {
                 throw `Formatação da entrada incorreta\nID: ${this.id} typeOf: ${typeof (this.id)}\nID de usuário: ${this.userId} typeOf: ${typeof (this.userId)}`;
             } else {
                 const query = `DELETE from image where image_id = $1 AND user_id = $2 RETURNING *`;
-                const values = [this.id,this.userId];
+                const values = [this.id, this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 writeLog("\nImagem apagada com sucesso!\nID: " + this.dbResult.rows[0].image_id);
                 return this.dbResult;
@@ -102,7 +102,7 @@ class image {
                 const values = [this.userId];
                 this.setDbResult = await pool.query(query, values);
                 if (this.dbResult.rowCount === 0) {
-                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${this.dbResult}`;
+                    throw `Resposta ruim do banco de dados, provavelmente não encontrou os dados que estava procurando\nresultado: ${JSON.stringify(this.dbResult)}`;
                 }
                 if(!fs.existsSync(`downloaded_images/user_${this.dbResult.rows[0].user_id}`)){
                     fs.mkdirSync(`downloaded_images/user_${this.dbResult.rows[0].user_id}`);
@@ -110,11 +110,11 @@ class image {
                 this.dbResult.rows.forEach(element => {
                     fs.writeFileSync(`downloaded_images/user_${element.user_id}/${element.image_name}`, element.image_file);
                 });
-                writeLog("\nSucesso em getImagesByUser\nQuantidade de imagens encontradas: " + this.dbResult.rowCount + `\n../downloaded_images/${this.dbResult.rows[0].user_id}`);
+                writeLog("\nSucesso ao procurar imagens de usuário\nQuantidade de imagens encontradas: " + this.dbResult.rowCount + `\n../downloaded_images/user_${this.dbResult.rows[0].user_id}/${this.dbResult.rows[0].user_id}`);
                 return this.dbResult;
             }
         } catch (err) {
-            writeLog("\nErro em getImagesByUser\nErro: " + err);
+            writeLog("\nErro ao procurar imagens de usuário\nErro: " + err);
             return false;
         }
     }

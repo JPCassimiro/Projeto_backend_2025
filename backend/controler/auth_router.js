@@ -18,7 +18,14 @@ router.post('/users/login', async (req, res, next) => {
         res.end();
         writeLog(`\nUsuário fez login com sucesso na rota /users/login\nID: ${resp.rows[0].user_id}`);
     } else {
-        res.json({ message: "Usuário não encontrado, verifique seus dados ou crie uma conta" });
+        res.status(400).json({
+            message: "Erro ao fazer login. Isso pode ocorrer caso a formatação da entrada esteja errada, caso você não tenha uma conta ou por um erro interno no banco de dados.",
+            parametrosEsperados: {
+                email: "string",
+                password: "string",
+            },
+            bodyType: "form-urlencoded"
+        });
         res.end();
         writeLog("\nErro no login de usuário na rota /users/login");
     }
@@ -28,7 +35,7 @@ router.post('/users/signin', async (req, res, next) => {
     writeLog("\nRequisisção post recebida na rota /users/signin");
     const email = req.body.email;
     const password = req.body.password;
-    const userObj = new userClass(0, email, password, null);
+    const userObj = new userClass({email: email, password: password});
     const resp = await userObj.createUser();
     if (resp) {
         req.session.user = email;
@@ -37,7 +44,14 @@ router.post('/users/signin', async (req, res, next) => {
         res.end();
         writeLog(`\nSucesso na criação de usuário na rota /users/signin\nID: ${resp.rows[0].user_id}`);
     } else {
-        res.json("Erro na criação de usuário, verifique seus dados");
+        res.status(400).json({
+            message: "Erro ao criar uma conta. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+            parametrosEsperados: {
+                email: "string",
+                password: "string",
+            },
+            bodyType: "form-urlencoded"
+        });
         res.end();
         writeLog("\nErro na criação de usuário na rota /users/signin");
     }
