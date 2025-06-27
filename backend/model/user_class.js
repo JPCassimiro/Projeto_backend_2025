@@ -36,16 +36,16 @@ class user {
             } else {
                 const query = `insert into users (user_email, user_password) values ($1,$2) returning *`;
                 const values = [this.email, this.password];
-                const response = await pool.query(query, values);
-                this.setUserDbResult = response;
-                if (response.rowCount == 0) {
-                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
+                this.setUserDbResult = await pool.query(query, values);
+                if (this.dbResult.rowCount == 0) {
+                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(this.dbResult)}\n` + JSON.stringify(this.dbResult.rows[0]);
                 }
                 writeLog("\nUsuário criado com sucesso\nID: " + this.dbResult.rows[0].user_id);
-                return this.dbResult.rowCount;
+                return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro em createUser\n" + err);
+            return false;
         }
     }
 
@@ -56,15 +56,16 @@ class user {
             } else {
                 const query = `delete from users where user_id = $1 returning *`;
                 const values = [this.id];
-                const response = await pool.query(query, values);
-                this.setUserDbResult = response;
-                if (response.rowCount == 0) {
-                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
+                this.setUserDbResult = await pool.query(query, values);
+                if (this.dbResult.rowCount == 0) {
+                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(this.dbResult)}\n` + JSON.stringify(this.dbResult.rows[0]);
                 }
                 writeLog("\nSucesso em deletar um usuário\nID: " + this.dbResult.rows[0].user_id);
+                return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro em deleteUser\n" + err);
+            return false;
         }
     }
 
@@ -74,26 +75,26 @@ class user {
                 throw `Entrada incorreta em getUser\nid: ${this.id} typeOf: ${typeof (this.id)}`;
             } else if (this.id === 0) {
                 const query = `select * from users`;
-                const response = await pool.query(query);
-                this.setUserDbResult = response;
+                this.setUserDbResult = await pool.query(query);
                 let regex = /\{/ig;
-                if (response.rowCount == 0) {
-                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
+                if (this.dbResult.rowCount == 0) {
+                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(this.dbResult)}\n` + JSON.stringify(this.dbResult.rows[0]);
                 }
                 writeLog("\nUsuários no sistema:\n" + JSON.stringify(this.dbResult.rows).replace(regex, "\n"));
 
             } else {
                 const query = `select * from users where user_id = $1`;
                 const values = [this.id];
-                const response = await pool.query(query, values);
-                this.setUserDbResult = response;
-                if (response.rowCount == 0) {
-                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
+                this.setUserDbResult  = await pool.query(query, values);
+                if (this.dbResult.rowCount == 0) {
+                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(this.dbResult)}\n` + JSON.stringify(this.dbResult.rows[0]);
                 }
                 writeLog("\nDados do usuário de ID " + this.dbResult.rows[0].user_id + ":\n" + JSON.stringify(rhis.dbResult.rows[0]));
+                return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro em getUser\n" + err);
+            return false;
         }
     }
 
@@ -104,16 +105,16 @@ class user {
             } else {
                 const query = `select * from users where user_email = $1 and user_password = $2`;
                 const values = [this.email, this.password];
-                const response = await pool.query(query, values);
-                this.setUserDbResult = response
-                if (response.rowCount == 0) {
-                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(response)}\n` + JSON.stringify(response.rows[0]);
+                this.setUserDbResult = await pool.query(query, values);
+                if (this.dbResult.rowCount == 0) {
+                    throw `Resposta ruim, provavelmente não encontrou o que você estava procurando\nResposta:\n${JSON.stringify(this.dbResult)}\n` + JSON.stringify(this.dbResult.rows[0]);
                 }
                 writeLog("\nUsuário logado com sucesso\nID:" + this.dbResult.rows[0].user_id);
                 return this.dbResult;
             }
         } catch (err) {
             writeLog("\nErro em logUser\n" + err);
+            return false;
         }
     }
 }

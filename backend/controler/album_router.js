@@ -22,17 +22,17 @@ router.post('/homepage/createAlbum', async (req, res, next) => {
             const albumObj = new albumClass({ name: albumName, userId: req.session.userId });
             const resp = await albumObj.createAlbum();
             if (resp) {
-                res.json({ message: "Sucesso em criar album" });
+                res.status(200).json({ message: "Sucesso em criar album" });
                 res.end();
                 writeLog(`\nSucesso na criação de album na rota /homepage/createAlbum\nalbum_id: ${resp.rows[0].album_id} userId: ${req.session.userId}`);
             } else {
-                res.json({ message: "Erro ao interno criar album" });
+                res.status(500).json({ message: "Erro ao interno criar album" });
                 res.end();
                 writeLog(`\nErro na criação de album na rota /homepage/createAlbum\nuserId: ${req.session.userId} \nsession: ${req.session.id}`);
             }
         } else {
             res.status(400).json({
-                message: "Erro ao criar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao criar um álbum. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumName: "string",
                 },
@@ -42,7 +42,7 @@ router.post('/homepage/createAlbum', async (req, res, next) => {
             writeLog(`\nErro na criação de album na rota /homepage/createAlbum\nuserId: ${req.session.userId} \nsession: ${req.session.id}`);
         }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
@@ -56,7 +56,7 @@ router.get('/homepage/getUserAlbuns', async (req, res, next) => {
         const resp = await albumObj.getAlbunsByUser();
         if (resp) {
             writeLog(`\nSucesso no retorno de album na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
-            res.json({ message: "Sucesso em retornar albums", albuns: JSON.stringify(resp.rows) });
+            res.status(200).json({ message: "Sucesso em retornar albums", albuns: JSON.stringify(resp.rows) });
             res.end();
         } else {
             writeLog(`\nErro ao tentar buscar albuns na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
@@ -69,7 +69,7 @@ router.get('/homepage/getUserAlbuns', async (req, res, next) => {
             res.end();
         }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
@@ -83,11 +83,11 @@ router.delete('/homepage/deleteAlbum', async (req, res, next) => {
             const albumObj = new albumClass({ id: albumId, userId: req.session.userId });
             const resp = await albumObj.deleteAlbum();
             if (resp) {
-                res.json({ message: "Sucesso em apagar album" });
+                res.status(200).json({ message: "Sucesso em apagar album" });
                 res.end();
                 writeLog(`\nSucesso em apagar albuns na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.json({ message: "Erro ao interno excluir album" });
+                res.status(500).json({ message: "Erro interno ao excluir album" });
                 res.end();
                 writeLog(`\nErro ao tentar apagar um album na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
             }
@@ -103,7 +103,7 @@ router.delete('/homepage/deleteAlbum', async (req, res, next) => {
             writeLog(`\nErro ao tentar apagar um album na rota /homepage/getUserAlbuns\nuserId: ${req.session.userId}`);
         }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
@@ -118,24 +118,17 @@ router.patch('/homepage/updateAlbum', async (req, res, next) => {
             const albumObj = new albumClass({ name: albumName, userId: req.session.userId, id: albumId });
             const resp = await albumObj.updateAlbumName();
             if (resp) {
-                res.json({ message: "Sucesso em alterar album", album: JSON.stringify(resp.rows[0]) });
+                res.status(200).json({ message: "Sucesso em alterar album", album: JSON.stringify(resp.rows[0]) });
                 res.end();
                 writeLog(`\nSucesso em alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.status(400).json({
-                    message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
-                    parametrosEsperados: {
-                        albumId: "number",
-                        albumName: "string",
-                    },
-                    bodyType: "form-urlencoded"
-                });
+                res.status(500).json({message: "Erro ao alterar um álbum. Erro interno no banco de dados."});
                 res.end();
                 writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}`);
             }
         } else {
             res.status(400).json({
-                message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao alterar um álbum. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumId: "number",
                     albumName: "string",
@@ -146,7 +139,7 @@ router.patch('/homepage/updateAlbum', async (req, res, next) => {
             writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbum\nuserId: ${req.session.userId}`);
         }
     } else {
-        res.json({ message: "Você não está logado" });
+        res.status(403).json({ message: "Você não está logado" });
         res.end();
     }
 });
@@ -160,25 +153,17 @@ router.patch('/homepage/updateAlbumPreview', async (req, res, next) => {
             const albumObj = new albumClass({ preview: albumPreview, id: albumId, userId: req.session.userId });
             const resp = await albumObj.updateAlbumPreview();
             if (resp) {
-                res.json({ message: "Sucesso em alterar preview do album", album: JSON.stringify(resp.rows[0]) });
+                res.status(200).json({ message: "Sucesso em alterar preview do album", album: JSON.stringify(resp.rows[0]) });
                 res.end();
                 writeLog(`\nSucesso em alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}\nalbum_id: ${resp.rows[0].album_id}`);
             } else {
-                res.status(400).json({
-                    message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
-                    parametrosEsperados: {
-                        albumId: "number",
-                        albumName: "string",
-                        albumPreview: "number"
-                    },
-                    bodyType: "form-urlencoded"
-                });
+                res.status(500).json({message: "Erro ao alterar um álbum. Erro interno no banco de dados."});
                 res.end();
                 writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}`);
             }
         } else {
             res.status(400).json({
-                message: "Erro ao alterar um álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao alterar um álbum. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumId: "number",
                     albumName: "string",
@@ -190,7 +175,7 @@ router.patch('/homepage/updateAlbumPreview', async (req, res, next) => {
             writeLog(`\nErro ao tentar alterar um album na rota /homepage/updateAlbumPreview\nuserId: ${req.session.userId}`);
         }
     } else {
-        res.json({ message: "Você não está logado" });
+        res.status(403).json({ message: "Você não está logado" });
         res.end();
     }
 })

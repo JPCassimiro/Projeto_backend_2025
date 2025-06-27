@@ -19,26 +19,31 @@ router.post('/homepage/addImageInAlbum', async (req, res, next) => {
         const userId = req.session.userId;
         const albumId = Number(req.body.albumId);
         const imageId = Number(req.body.imageId);
-        const junctionObj = new junctionClass({ imageId: imageId, albumId: albumId, userid: userId });
-        const resp = await junctionObj.insertImageIntoAlbum();
-        if (resp) {
-            res.json({ message: "Sucesso em adicionar imagem ao album" });
-            writeLog(`\nSucesso em adicionar uma imagem em um album na rota /homepage/addImageInAlbum\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId} album_id: ${resp.rows[0].album_id}`);
-            res.end();
-        } else {
+                if (albumId == undefined || imageId == undefined || isNaN(albumId) == true || isNaN(imageId) == true) {
             res.status(400).json({
-                message: "Erro ao inserir imagem no álbum. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao adicionar uma imagem no album. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumId: "number",
                     imageId: "number",
                 },
                 bodyType: "form-urlencoded"
             });
+            writeLog(`\nFalha em adicionar uma imagem de um album na rota /homepage/addImageInAlbum\nuserId: ${req.session.userId}`);
+            res.end();
+        }
+        const junctionObj = new junctionClass({ imageId: imageId, albumId: albumId, userid: userId });
+        const resp = await junctionObj.insertImageIntoAlbum();
+        if (resp) {
+            res.status(200).json({ message: "Sucesso em adicionar imagem ao album" });
+            writeLog(`\nSucesso em adicionar uma imagem em um album na rota /homepage/addImageInAlbum\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId} album_id: ${resp.rows[0].album_id}`);
+            res.end();
+        } else {
+            res.status(500).json({message: "Erro ao inserir imagem no álbum. Erro interno no banco de dados."});
             res.end();
             writeLog(`\nFalha em adicionar uma imagem em um album na rota /homepage/addImageInAlbum\nuserId: ${req.session.userId}`);
         }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
@@ -48,15 +53,9 @@ router.get('/homepage/getImagesInAlbum', async (req, res, next) => {
     if (checkSession(req.session, req.session.user, '/homepage/getImagesInAlbum')) {
         const userId = Number(req.session.userId);
         const albumId = Number(req.body.albumId);
-        const junctionObj = new junctionClass({ userid: userId, albumId: albumId });
-        const resp = await junctionObj.returnImagesInAlbum();
-        if (resp) {
-            res.json({ message: "Sucesso em retornar imagens em um album", imagens: JSON.stringify(resp.rows) });
-            writeLog(`\nSucesso em obter as imagens de um album na rota /homepage/addImageInAlbum\nuserId: ${req.session.userId} \nimagens: ${JSON.stringify(resp.rows)}`);
-            res.end();
-        } else {
+        if (albumId == undefined || isNaN(albumId) == true) {
             res.status(400).json({
-                message: "Erro ao retornar imagens no album. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao retornar imagens no album. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumId: "number",
                 },
@@ -65,8 +64,20 @@ router.get('/homepage/getImagesInAlbum', async (req, res, next) => {
             writeLog(`\nFalha em retornar imagens de um album na rota /homepage/getImagesInAlbum\nuserId: ${req.session.userId}`);
             res.end();
         }
+        const junctionObj = new junctionClass({ userid: userId, albumId: albumId });
+        const resp = await junctionObj.returnImagesInAlbum();
+        if (resp) {
+            res.status(200).json({ message: "Sucesso em retornar imagens em um album", imagens: JSON.stringify(resp.rows) });
+            writeLog(`\nSucesso em obter as imagens de um album na rota /homepage/addImageInAlbum\nuserId: ${req.session.userId} \nimagens: ${JSON.stringify(resp.rows)}`);
+            res.end();
+        } else {
+            res.status(500).json({ message: "Erro interno ao retornar imagens em album" });
+            writeLog(`\nFalha em retornar imagens de um album na rota /homepage/getImagesInAlbum\nuserId: ${req.session.userId}`);
+            res.end();
+
+        }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
@@ -77,15 +88,10 @@ router.delete('/homepage/removeImageFromAlbum', async (req, res, next) => {
         const userId = req.session.userId;
         const albumId = Number(req.body.albumId);
         const imageId = Number(req.body.imageId);
-        const junctionObj = new junctionClass({ userid: userId, albumId: albumId, imageId: imageId });
-        const resp = await junctionObj.removeImageFromAlbum();
-        if (resp) {
-            res.json({ message: "Sucesso em remover imagem do  album", albuns: JSON.stringify(resp.rows) });
-            writeLog(`\nSucesso em remover uma imagem em um album na rota /homepage/addImageInAlbum\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId} album_id: ${resp.rows[0].album_id}`);
-            res.end();
-        } else {
+        console.log(typeof(albumId));
+        if (albumId == undefined || imageId == undefined || isNaN(albumId) == true || isNaN(imageId) == true) {
             res.status(400).json({
-                message: "Erro ao remover uma imagem no album. Isso pode ocorrer caso a formatação da entrada esteja errada ou por um erro interno no banco de dados.",
+                message: "Erro ao remover uma imagem no album. Formatação da entrada errada.",
                 parametrosEsperados: {
                     albumId: "number",
                     imageId: "number",
@@ -95,8 +101,19 @@ router.delete('/homepage/removeImageFromAlbum', async (req, res, next) => {
             writeLog(`\nFalha em remover uma imagem de um album na rota /homepage/removeImageFromAlbum\nuserId: ${req.session.userId}`);
             res.end();
         }
+        const junctionObj = new junctionClass({ userid: userId, albumId: albumId, imageId: imageId });
+        const resp = await junctionObj.removeImageFromAlbum();
+        if (resp) {
+            res.status(200).json({ message: "Sucesso em remover imagem do  album", albuns: JSON.stringify(resp.rows) });
+            writeLog(`\nSucesso em remover uma imagem em um album na rota /homepage/addImageInAlbum\nimage_id: ${resp.rows[0].image_id} userId: ${req.session.userId} album_id: ${resp.rows[0].album_id}`);
+            res.end();
+        } else {
+            res.status(500).json({ message: "Erro ao remover imagem do álbum. Erro interno do banco de dados." });
+            writeLog(`\nFalha em remover uma imagem de um album na rota /homepage/removeImageFromAlbum\nuserId: ${req.session.userId}`);
+            res.end();
+        }
     } else {
-        res.json({ message: "Você não esta logado" });
+        res.status(403).json({ message: "Você não esta logado" });
         res.end();
     }
 });
